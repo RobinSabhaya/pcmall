@@ -1,0 +1,50 @@
+{
+  "name": "pcmall",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js -e ejs,js,json && npx puppeteer browsers install chrome",
+    "start": "node server.js",
+    "prod": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Robin Sabhaya",
+  "license": "ISC",
+  "dependencies": {
+    "@stripe/stripe-js": "^2.0.0",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "connect-mongo": "^5.0.0",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.10",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
+    "http-status": "^2.0.0",
+    "joi": "^17.13.3",
+    "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^9.0.0",
+    "mime-types": "^2.1.35",
+    "moment-timezone": "^0.5.46",
+    "mongoose": "^6.6.7",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.7",
+    "nodemon": "^2.0.22",
+    "passport": "^0.6.0",
+    "passport-google-oauth2": "^0.2.0",
+    "puppeteer": "^23.6.0",
+    "serve-favicon": "^2.5.0",
+    "sharp": "^0.33.5",
+    "socket.io": "^4.7.2",
+    "stripe": "^12.17.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

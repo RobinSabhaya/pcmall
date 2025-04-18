@@ -1,0 +1,91 @@
+<div class="flex flex-col gap-y-7 items-center mt-7 w-full">
+  <% if(cartData) {%>
+    <% cartData.forEach((product)=>{%>
+      <div class="cartBox flex justify-between items-center flex-row flex-wrap w-3/4 h-fit p-6 rounded-lg">
+        <div>
+          <img src="<%=  BASE_URL %>/uploads/<%=product?.item?.img[0] %>" alt="" height="100px" width="100px" />
+        </div>
+        <div class="flex flex-wrap w-1/2">
+          <%= product?.item?.name %>
+        </div>
+        <div>
+          <button class="text-2xl bg-slate-300 px-3 m-1 rounded-md" name="add" id="btnAdd"
+            productId="<%= product?.item?._id %>">+</button>
+          <div class="text-black text-xl " id="qty">
+            <%= product?.qty %> pcs.
+          </div>
+          <button class="text-2xl bg-slate-300 px-3 rounded-md m-1" name="remove" id="btnRemove"
+            productId="<%= product?.item?._id %>" <% if(product?.qty==1) {%>disabled<%}%> >-</button>
+        </div>
+        <div class="m-3 text-red-500 text-xl">₹ <%= product?.item?.price%>
+        </div>
+        <button class="bin-button w-12 h-12 bg-red-700" productId="<%= product?.item?._id %>" id="bin-button">
+          <svg class="bin-top" viewBox="0 0 39 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line y1="5" x2="39" y2="5" stroke="white" stroke-width="4"></line>
+            <line x1="12" y1="1.5" x2="26.0357" y2="1.5" stroke="white" stroke-width="3"></line>
+          </svg>
+          <svg class="bin-bottom" viewBox="0 0 33 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <mask id="path-1-inside-1_8_19" fill="white">
+              <path d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"></path>
+            </mask>
+            <path
+              d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
+              fill="white" mask="url(#path-1-inside-1_8_19)"></path>
+            <path d="M12 6L12 29" stroke="white" stroke-width="4"></path>
+            <path d="M21 6V29" stroke="white" stroke-width="4"></path>
+          </svg>
+        </button>
+
+      </div>
+      <%})%>
+        <div class="text-red-500 flex justify-end items-center text-2xl w-10/12 font-bold">
+          <% if(session?.cart?.totalPrice> 0) {%>
+            Total Price : ₹ <%= session?.cart?.totalPrice %>
+              <%} %>
+        </div>
+</div>
+
+<% if(session.cart.totalPrice> 0){%>
+  <div class="flex justify-center items-center flex-col flex-wrap">
+    <form class="rounded  pt-6 pb-8 mb-4" method="post" action="/cart" id="paymentForm">
+      <select name=""
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-5 res-input"
+        id="paymentType">
+        <option value="cash">Cash On Delivery</option>
+        <option value="card">Card</option>
+      </select>
+      <div class="mb-4">
+        <input
+          class="shadow appearance-none border rounded w-96 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline res-input"
+          id="phone" type="number" placeholder="Phone Number" name="phone" />
+      </div>
+      <div class="mb-4">
+        <input
+          class="shadow appearance-none border rounded w-96 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline res-input"
+          id="address" type="text" placeholder="address" name="address" />
+      </div>
+      <div
+        class="shadow appearance-none border rounded w-96 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline res-input"
+        id="card"></div>
+      <div>
+        <button class="m-4 text-white bg-red-500 rounded-lg p-4">
+          submit
+        </button>
+      </div>
+    </form>
+    <%} else {%>
+      <div class="flex justify-center flex-col items-center">
+        <img src="/cart.png" alt="Empty Cart" height="300px" width="300px">
+        <h1 class="text-3xl mt-5 mx-5">Cart is empty!!</h1>
+        <h2 class="mx-5 mt-3">Go to home page. &nbsp; <a href="/" class="decoration-none text-red-500">home</a></h2>
+      </div>
+      <%}%>
+
+  </div>
+  <%}else {%>
+    <div class="flex justify-center flex-col">
+      <img src="/cart.png" alt="Empty Cart" height="300px" width="300px">
+      <h1 class="text-3xl mt-5 mx-5">Cart is empty!!</h1>
+      <h2 class="mx-5 mt-3">Go to home page. &nbsp; <a href="/" class="decoration-none text-red-500">home</a></h2>
+    </div>
+    <%}%> %>
