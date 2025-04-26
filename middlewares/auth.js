@@ -48,6 +48,7 @@ exports.auth = async (req, res, next) => {
 
 exports.isCustomer = async (req, res, next) => {
   if (req.user.role === "customer") {
+    req.user = req.user;
     next();
   } else {
     // req.flash("error", "Login Required");
@@ -62,6 +63,7 @@ exports.isCustomer = async (req, res, next) => {
 };
 exports.isAdmin = async (req, res, next) => {
   if (req.user.role === "admin") {
+    req.user = req.user;
     next();
   } else {
     // req.flash("error", "Login Required");

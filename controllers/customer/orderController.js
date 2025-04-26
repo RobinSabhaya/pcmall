@@ -16,48 +16,99 @@ const orderController = () => {
     },
     async postOrder(req, res) {
       const { phone, address, token, paymentType } = req.body;
-      const orderData = new orderModel({
-        customerId: req?.session?.user?._id,
-        items: req?.session?.cart?.items,
-        cart: req.session.cart,
-        phone,
-        address,
-        paymentType,
-        paymentStatus: false,
-        status: "order_placed",
-      });
+
+      const customer = req.user;
+
+      // if card
       if (paymentType === "card") {
         try {
-          stripe.customers
-            .create({
+          // Create customer
+          let stripeCustomer;
+          if (token)
+            stripeCustomer = await stripe.customers.create({
               email: "robinjsabhaya13@gmail.com",
               source: token,
-            })
-            .then(async (customer) => {
-              stripe.paymentIntents.create({
-                amount: req?.session?.cart?.totalPrice * 100,
-                customer: customer._id,
-                currency: "INR",
-                description: `orderId : ${req?.session?.cart?.items}`,
-              });
-              orderData.paymentStatus = true;
-              await orderData.save();
-              delete req.session.cart;
-              req.flash("payment", "payment success");
-              return res.status(302).redirect("/customer/order");
             });
+
+          // create payment intent
+          const paymentIntent = await stripe.paymentIntents.create({
+            amount: req?.session?.cart?.totalPrice * 100,
+            ...(stripeCustomer && { customer: stripeCustomer._id }),
+            currency: "INR",
+            description: `orderId : ${req?.session?.cart?.items}`,
+            automatic_payment_methods: {
+              enable: true,
+            },
+          });
+
+          // Save order details
+          await orderModel.create({
+            customerId: req?.session?.user?._id,
+            items: req?.session?.cart?.items,
+            cart: req.session.cart,
+            phone,
+            address,
+            paymentType,
+            paymentStatus: true,
+            status: "order_placed",
+          });
+
+          delete req?.session?.cart;
+
+          req.flash("payment", "payment success");
+
+          // For PCMall APP
+          if (req.xhr) {
+            return res.status(200).json({
+              success: true,
+              message: "Payment successfully",
+              data: paymentIntent.client_secret,
+            });
+          } else {
+            return res.status(302).redirect("/customer/order");
+          }
         } catch (error) {
           console.log(error.message);
         }
       }
+
+      // if cash
       if (paymentType === "cash") {
         try {
-          orderData.paymentStatus = true;
-          await orderData.save();
-          delete req.session.cart;
-          return res.status(302).redirect("/customer/order");
+          // Save order
+          await orderModel.create({
+            customerId: customer._id,
+            items: req?.session?.cart?.items,
+            cart: req.session.cart,
+            phone,
+            address,
+            paymentType,
+            paymentStatus: true,
+            status: "order_placed",
+          });
+
+          delete req?.session?.cart;
+
+          // For PCMall APP
+          if (req.xhr) {
+            return res.status(200).json({
+              success: true,
+              message: "Payment successfully",
+              data: paymentIntent.client_secret,
+            });
+          } else {
+            return res.status(302).redirect("/customer/order");
+          }
         } catch (err) {
-          return res.status(302).redirect("/customer/order");
+          // For PCMall APP
+          if (req.xhr) {
+            return res.status(400).json({
+              success: false,
+              message: err.message,
+            });
+          } else {
+            return res.status(302).redirect("/customer/order");
+          }
         }
       }
     },
