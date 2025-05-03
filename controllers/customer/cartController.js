@@ -248,8 +248,9 @@ const cartController = () => {
         const totalQty = cartData.reduce((acc, c) => {
           return acc + c.quantity;
         }, 0);
+
         const totalPrice = cartData.reduce((acc, c) => {
-          return acc + c.productId.price;
+          return acc + c.productId.price * c.quantity;
         }, 0);
 
         return res.status(200).json({
