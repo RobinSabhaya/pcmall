@@ -4,7 +4,9 @@ const productModel = require("../../db/models/productSchema");
 const categoryModel = require("../../db/models/categorySchema");
 const ratingModel = require("../../db/models/ratingSchema");
 const fs = require("fs");
-const mongoose = require("mongoose");
+const productService = require("../../src/services/product.service");
+const { default: mongoose } = require("mongoose");
+
 const productController = () => {
   return {
     async postProduct(req, res) {
@@ -336,6 +338,58 @@ const productController = () => {
         return res.json({
           status: 400,
           message: err.message,
+        });
+      }
+    },
+    async getAllProducts(req, res) {
+      try {
+        let { categories, colors, prices, ...options } = req.query;
+
+        categories = JSON.parse(categories || "[]");
+        colors = JSON.parse(colors || "[]");
+        prices = JSON.parse(prices || "{}");
+
+        const filter = {
+          $or: [],
+        };
+
+        // Set categories
+        if (categories?.length) {
+          filter.categories = {
+            $in: categories,
+          };
+        }
+
+        // Set colors
+        if (colors.length) {
+          filter.colors = {
+            colors: { $in: colors },
+          };
+        }
+
+        // Set prices
+        if (prices) {
+          filter.price = {
+            $gte: prices?.min || 0,
+            $lte: prices?.max || 10000,
+          };
+        }
+
+        if (!filter.$or.length) delete filter.$or;
+
+        // Get all cart data
+        const productData = await productService.getAllProducts(filter, {
+          user: new mongoose.Types.ObjectId(req.user._id),
+        });
+
+        return res.status(200).json({
+          success: true,
+          data: productData,
+        });
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message || "Something went wrong",
         });
       }
     },

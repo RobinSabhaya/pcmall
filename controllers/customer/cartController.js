@@ -1,4 +1,7 @@
 const BASE_URL = process.env.BASE_URL;
+const productService = require("../../src/services/product.service");
+const cartService = require("../../src/services/cart.service");
+const mongoose = require("mongoose");
 const cartController = () => {
   return {
     updateCart(req, res) {
@@ -114,6 +117,155 @@ const cartController = () => {
         status: 200,
         cartData: req.session.cart,
       });
+    },
+    async addToCart(req, res) {
+      try {
+        const { productId, quantity } = req.body;
+
+        /** Check product exists or not */
+        const productExists = await productService.getProduct({
+          _id: productId,
+        });
+
+        if (!productExists) {
+          return res.status(404).json({
+            success: false,
+            message: "Product not found",
+          });
+        }
+
+        /** create cart */
+        const cartData = await cartService.createCart(
+          {
+            productId,
+            customerId: req.user._id,
+            quantity,
+          },
+          {
+            productId,
+            customerId: req.user._id,
+            quantity,
+          },
+          {
+            upsert: true,
+            new: true,
+          }
+        );
+
+        return res.status(200).json({
+          success: true,
+          data: cartData,
+          message: "Cart added successfully",
+        });
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message || "Something went wrong",
+        });
+      }
+    },
+    async updateToCart(req, res) {
+      try {
+        const { cartId, quantity } = req.body;
+
+        /** Check cart exists or not */
+        const cartExists = await cartService.getCart({ id: cartId });
+
+        if (!cartExists) {
+          return res.status(404).json({
+            success: false,
+            message: "Cart not found",
+          });
+        }
+
+        /** create cart */
+        const cartData = await cartService.createCart(
+          {
+            cartId,
+          },
+          {
+            quantity,
+          },
+          {
+            new: true,
+          }
+        );
+
+        return res.status(200).json({
+          success: true,
+          data: cartData,
+          message: "Cart updated successfully",
+        });
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message || "Something went wrong",
+        });
+      }
+    },
+    async removeToCart(req, res) {
+      try {
+        const { cartId } = req.params;
+
+        /** Check cart exists or not */
+        const cartExists = await cartService.getCart({ id: cartId });
+
+        if (!cartExists) {
+          return res.status(404).json({
+            success: false,
+            message: "Cart not found",
+          });
+        }
+
+        /** create cart */
+        await cartService.removeCart({
+          cartId,
+        });
+
+        return res.status(200).json({
+          success: true,
+          message: "Cart removed successfully",
+        });
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message || "Something went wrong",
+        });
+      }
+    },
+    async getAllCart(req, res) {
+      try {
+        const { ...options } = req.query;
+
+        // Get all cart data
+        const cartData = await cartService.getAllCart(
+          {
+            customerId: new mongoose.Types.ObjectId(req.user._id),
+          },
+          options
+        );
+
+        const totalQty = cartData.reduce((acc, c) => {
+          return acc + c.quantity;
+        }, 0);
+        const totalPrice = cartData.reduce((acc, c) => {
+          return acc + c.productId.price;
+        }, 0);
+
+        return res.status(200).json({
+          success: true,
+          data: {
+            items: cartData,
+            totalQty,
+            totalPrice,
+          },
+        });
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message || "Something went wrong",
+        });
+      }
     },
   };
 };

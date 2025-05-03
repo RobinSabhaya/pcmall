@@ -37,9 +37,10 @@ const orderController = () => {
             currency: "INR",
             description: `orderId : ${req?.session?.cart?.items}`,
             automatic_payment_methods: {
-              enable: true,
+              enabled: true,
             },
           });
+          console.log("🚀 ~ postOrder ~ paymentIntent:", paymentIntent);
 
           // Save order details
           await orderModel.create({
@@ -100,15 +101,16 @@ const orderController = () => {
             return res.status(302).redirect("/customer/order");
           }
         } catch (err) {
+          console.log("🚀 ~ postOrder ~ err:", err);
           // For PCMall APP
-          if (req.xhr) {
-            return res.status(400).json({
-              success: false,
-              message: err.message,
-            });
-          } else {
-            return res.status(302).redirect("/customer/order");
-          }
+          // if (req.xhr) {
+          //   return res.status(400).json({
+          //     success: false,
+          //     message: err.message,
+          //   });
+          // } else {
+          //   return res.status(302).redirect("/customer/order");
+          // }
         }
       }
     },

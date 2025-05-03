@@ -44,4 +44,7 @@ route.post(
 // Get rating
 route.get("/rating/list", [auth, isCustomer], ratingController().getRating);
 
+// For PCMall APP
+route.get("/app/product",[auth,isCustomer],productController().getAllProducts)
+
 module.exports = route;
