@@ -349,7 +349,6 @@ const productController = () => {
         colors = JSON.parse(colors || "[]");
         prices = JSON.parse(prices || "{}");
 
-        console.log("🚀 ~ getAllProducts ~ prices:", prices);
         const filter = {
           $or: [],
         };
