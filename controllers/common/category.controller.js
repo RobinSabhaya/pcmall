@@ -1,4 +1,4 @@
-const categoryService = require("../../services/category.service");
+const categoryService = require("../../src/services/category.service");
 const catchAsync = require("../../src/utils/catchAsync");
 
 const getAllCategories = catchAsync(async (req, res) => {

@@ -12,6 +12,7 @@ const adminRoute = require("./admin_route");
 const passportRoute = require("./passport_route");
 const wishlistRoute = require("./wishlist.route");
 const categoryRoute = require("./category.route");
+const checkoutRoute = require("./checkout.route");
 
 route.use("/", homeRoute);
 route.use("/", productRoute);
@@ -24,5 +25,6 @@ route.use("/", adminRoute);
 route.use("/", passportRoute);
 route.use("/", wishlistRoute);
 route.use("/", categoryRoute);
+route.use("/", checkoutRoute);
 
 module.exports = route;
