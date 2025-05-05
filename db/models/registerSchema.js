@@ -8,6 +8,10 @@ const registerSchema = new mongoose.Schema(
     name: {
       type: String,
     },
+    last_name: {
+      type: String,
+      trim: true,
+    },
     email: {
       type: String,
     },
@@ -17,6 +21,17 @@ const registerSchema = new mongoose.Schema(
     profile: {
       type: String,
     },
+    addresses: [
+      {
+        address: {
+          type: String,
+          trim: true,
+        },
+        primary: {
+          type: Boolean,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -2,26 +2,6 @@ const Product = require("../../db/models/productSchema");
 const IMAGE_URL = process.env.IMAGE_URL;
 
 /**
- * Create a product
- * @param {object} reqBody
- * @param {object} options
- * @returns {Promise<Product>}
- */
-const createProduct = (reqBody, options = {}) => {
-  return Cart.findOneAndUpdate(reqBody, reqBody, { upsert: true, new: true });
-};
-
-/**
- * Remove product
- * @param {object} filter
- * @param {object} options
- * @returns {Promise<Product>}
- */
-const removeProduct = (filter, options = {}) => {
-  return Product.findOneAndDelete(filter, options);
-};
-
-/**
  * Get product
  * @param {object} filter
  * @param {object} options
@@ -139,8 +119,6 @@ const getAllProducts = (filter, options = {}) => {
 };
 
 module.exports = {
-  createProduct,
-  removeProduct,
   getProduct,
   getAllProducts,
 };
