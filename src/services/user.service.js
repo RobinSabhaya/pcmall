@@ -34,8 +34,19 @@ const addAddress = (reqBody, options = {}) => {
   return Address.create(reqBody);
 };
 
+/**
+ * Get a user
+ * @param {object} filter
+ * @param {object} options
+ * @returns {Promise<Register>}
+ */
+const getUser = (filter, options = {}) => {
+  return Register.findOne(filter, options);
+};
+
 module.exports = {
   updateUser,
   updateManyAddress,
   addAddress,
+  getUser,
 };

@@ -34,8 +34,30 @@ const updateUser = catchAsync(async (req, res) => {
 
   return res.status(200).json({
     success: true,
+    message: "User updated successfully!",
     data: userData,
   });
 });
 
-module.exports = { updateUser };
+/** Get user */
+const getUser = catchAsync(async (req, res) => {
+  const { _id } = req.user;
+
+  /** get user */
+  const userData = await userService.getUser({
+    _id,
+  });
+
+  if (!userData)
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+
+  return res.status(200).json({
+    success: true,
+    data: userData,
+  });
+});
+
+module.exports = { updateUser, getUser };
