@@ -41,6 +41,8 @@ const addAddress = (reqBody, options = {}) => {
  * @returns {Promise<Register>}
  */
 const getUser = (filter, options = {}) => {
+  const { populate } = options;
+  if (populate) return Register.findOne(filter).populate(populate);
   return Register.findOne(filter, options);
 };
 

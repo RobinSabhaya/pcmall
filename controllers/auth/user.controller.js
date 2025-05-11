@@ -44,9 +44,14 @@ const getUser = catchAsync(async (req, res) => {
   const { _id } = req.user;
 
   /** get user */
-  const userData = await userService.getUser({
-    _id,
-  });
+  const userData = await userService.getUser(
+    {
+      _id,
+    },
+    {
+      populate: [{ path: "primary_address" }],
+    }
+  );
 
   if (!userData)
     return res.status(404).json({
