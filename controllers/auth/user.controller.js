@@ -1,3 +1,4 @@
+const mongoose  = require("mongoose");
 const userService = require("../../src/services/user.service");
 const catchAsync = require("../../src/utils/catchAsync");
 
@@ -44,16 +45,11 @@ const getUser = catchAsync(async (req, res) => {
   const { _id } = req.user;
 
   /** get user */
-  const userData = await userService.getUser(
-    {
-      _id,
-    },
-    {
-      populate: [{ path: "primary_address" }],
-    }
-  );
+  const userData = await userService.getUser({
+    _id: new mongoose.Types.ObjectId(_id),
+  });
 
-  if (!userData)
+  if (!userData.length)
     return res.status(404).json({
       success: false,
       message: "User not found",
@@ -61,7 +57,7 @@ const getUser = catchAsync(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    data: userData,
+    data: userData[0],
   });
 });
 

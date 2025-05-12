@@ -41,9 +41,35 @@ const addAddress = (reqBody, options = {}) => {
  * @returns {Promise<Register>}
  */
 const getUser = (filter, options = {}) => {
-  const { populate } = options;
-  if (populate) return Register.findOne(filter).populate(populate);
-  return Register.findOne(filter, options);
+  return Register.aggregate([
+    {
+      $match: {
+        ...filter,
+      },
+    },
+    {
+      $lookup: {
+        from: "addresses",
+        localField: "_id",
+        foreignField: "user",
+        as: "addresses",
+      },
+    },
+    {
+      $lookup: {
+        from: "addresses",
+        localField: "primary_address",
+        foreignField: "_id",
+        as: "primary_address",
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: "$primary_address",
+      },
+    },
+  ]);
 };
 
 module.exports = {
