@@ -1,6 +1,7 @@
-const mongoose  = require("mongoose");
+const mongoose = require("mongoose");
 const userService = require("../../src/services/user.service");
 const catchAsync = require("../../src/utils/catchAsync");
+const ApiError = require("../../src/utils/apiError");
 
 const updateUser = catchAsync(async (req, res) => {
   const userId = req.user._id;
@@ -43,11 +44,15 @@ const updateUser = catchAsync(async (req, res) => {
 /** Get user */
 const getUser = catchAsync(async (req, res) => {
   const { _id } = req.user;
+  const { options } = req.query;
 
   /** get user */
-  const userData = await userService.getUser({
-    _id: new mongoose.Types.ObjectId(_id),
-  });
+  const userData = await userService.getUser(
+    {
+      _id: new mongoose.Types.ObjectId(_id),
+    },
+    options
+  );
 
   if (!userData.length)
     return res.status(404).json({
@@ -61,4 +66,30 @@ const getUser = catchAsync(async (req, res) => {
   });
 });
 
-module.exports = { updateUser, getUser };
+const updateAddress = catchAsync(async (req, res) => {
+  const { _id } = req.body;
+
+  let addressData = await userService.getAddress({
+    _id,
+  });
+
+  if (!addressData) throw new ApiError(404, "Address not found!");
+
+  addressData = await userService.updateAddress(
+    {
+      _id,
+    },
+    req.body,
+    {
+      new: true,
+    }
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: "Address updated successfully!",
+    data: addressData,
+  });
+});
+
+module.exports = { updateUser, getUser, updateAddress };

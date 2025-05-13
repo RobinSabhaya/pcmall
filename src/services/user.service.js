@@ -35,6 +35,27 @@ const addAddress = (reqBody, options = {}) => {
 };
 
 /**
+ * Update a address
+ * @param {object} filter
+ * @param {object} reqBody
+ * @param {object} options
+ * @returns {Promise<Address>}
+ */
+const updateAddress = (filter, reqBody, options = {}) => {
+  return Address.findOneAndUpdate(filter, reqBody, options);
+};
+
+/**
+ * Get a address
+ * @param {object} filter
+ * @param {object} options
+ * @returns {Promise<Address>}
+ */
+const getAddress = (filter, options = {}) => {
+  return Address.findOne(filter);
+};
+
+/**
  * Get a user
  * @param {object} filter
  * @param {object} options
@@ -53,6 +74,13 @@ const getUser = (filter, options = {}) => {
         localField: "_id",
         foreignField: "user",
         as: "addresses",
+        pipeline: [
+          {
+            $sort: {
+              createdAt: -1,
+            },
+          },
+        ],
       },
     },
     {
@@ -77,4 +105,6 @@ module.exports = {
   updateManyAddress,
   addAddress,
   getUser,
+  updateAddress,
+  getAddress,
 };
