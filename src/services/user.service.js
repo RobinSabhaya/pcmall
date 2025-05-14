@@ -100,6 +100,16 @@ const getUser = (filter, options = {}) => {
   ]);
 };
 
+/**
+ * Get a address
+ * @param {object} filter
+ * @param {object} options
+ * @returns {Promise<Address>}
+ */
+const deleteAddress = (filter, options = {}) => {
+  return Address.findOneAndDelete(filter);
+};
+
 module.exports = {
   updateUser,
   updateManyAddress,
@@ -107,4 +117,5 @@ module.exports = {
   getUser,
   updateAddress,
   getAddress,
+  deleteAddress,
 };

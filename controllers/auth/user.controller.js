@@ -92,4 +92,23 @@ const updateAddress = catchAsync(async (req, res) => {
   });
 });
 
-module.exports = { updateUser, getUser, updateAddress };
+const deleteAddress = catchAsync(async (req, res) => {
+  const { _id } = req.params;
+
+  let addressData = await userService.getAddress({ _id });
+
+  if (addressData.isPrimary)
+    throw new ApiError(404, "You can't delete primary address.");
+
+  addressData = await userService.deleteAddress({
+    _id,
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Address delete successfully",
+    data: addressData,
+  });
+});
+
+module.exports = { updateUser, getUser, updateAddress, deleteAddress };

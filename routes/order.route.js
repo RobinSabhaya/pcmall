@@ -41,4 +41,10 @@ route.post(
 //   wishlistController().deleteWishlist
 // );
 
+route.get(
+  "/app/user/orders",
+  [auth, isCustomer],
+  orderController().getOrderList
+);
+
 module.exports = route;

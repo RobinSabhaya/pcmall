@@ -1,6 +1,9 @@
 const dayjs = require("dayjs");
 const orderModel = require("./../../db/models/orderSchema");
 const stripe = require("stripe")(process.env.STRIPE_KEY);
+const orderService = require("../../src/services/order.service");
+const mongoose = require("mongoose");
+
 const orderController = () => {
   return {
     async getOrder(req, res) {
@@ -113,6 +116,22 @@ const orderController = () => {
           // }
         }
       }
+    },
+    async getOrderList(req, res) {
+      const { _id } = req.user;
+      const { ...options } = req.query;
+
+      const orderData = await orderService.getOrderList(
+        {
+          customerId: new mongoose.Types.ObjectId(_id),
+        },
+        options
+      );
+
+      return res.status(200).json({
+        success: true,
+        data: orderData[0],
+      });
     },
   };
 };

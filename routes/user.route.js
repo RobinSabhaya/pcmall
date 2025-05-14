@@ -15,4 +15,10 @@ route.put(
   userController.updateAddress
 );
 
+route.delete(
+  "/app/address/delete/:_id",
+  [auth, isCustomer],
+  userController.deleteAddress
+);
+
 module.exports = route;
