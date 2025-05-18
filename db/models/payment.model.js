@@ -24,6 +24,12 @@ const paymentSchema = new mongoose.Schema(
     status: {
       type: String,
     },
+    customerEmail: {
+      type : String
+    },
+    stripeSessionId: {
+      type : String
+    },
   },
   {
     timestamps: true,
