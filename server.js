@@ -16,6 +16,7 @@ const BASE_URL = process.env.BASE_URL || "http://127.0.0.1:8000/";
 require("./db/conn");
 require("./config/passport");
 const route = require("./routes/index");
+const webhookRoutes = require("./routes/webhooks");
 //Express App Specific Stuffs
 const app = express();
 const store = MongoStore.create({
@@ -42,6 +43,10 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
+
+// webhook routes
+app.use(webhookRoutes);
+
 app.use(express.json());
 app.use(cors());
 app.options("*", cors());

@@ -1,14 +1,11 @@
 const catchAsync = require("../../src/utils/catchAsync");
 const stripeService = require("../../src/services/stripe.service");
-const paymentService = require("../../src/services/payment.service");
-const success_url = process.env.STRIPE_SUCCESS_URL;
-const cancel_url = process.env.STRIPE_CANCEL_URL;
 
 // checkout
 const checkout = catchAsync(async (req, res) => {
   try {
-    const customerId = req.user._id;
-    const { cartIds, amount, currency } = req.body;
+    const user = req.user;
+    const { shippingAddress, currency, items } = req.body;
 
     // create payment intent v1
     // const intent = await stripeService.createPaymentIntent({
@@ -16,11 +13,35 @@ const checkout = catchAsync(async (req, res) => {
     //   currency,
     // });
 
+    // example
+    // [
+    //     {
+    //       price_data: {
+    //         currency,
+    //         product_data: { name: "item.name" },
+    //         unit_amount: 10 * 100,
+    //       },
+    //       quantity: 1,
+    //     },
+    //   ]
+
+    const line_items = items.map((ele) => ({
+      price_data: {
+        currency,
+        product_data: {
+          name: "ele.name",
+        },
+        unit_amount: ele.unitPrice * 100,
+      },
+      quantity: ele.quantity || 1,
+    }));
+
     const checkoutUrl = await stripeService.createCheckoutSession({
-      amount,
+      user,
+      line_items,
+      shippingAddress,
       currency,
-      success_url,
-      cancel_url,
+      items,
     });
 
     // save in db in v1

@@ -1,6 +1,12 @@
 const Order = require("../../db/models/orderSchema");
 const { paginationQuery } = require("../../src/helper/mongoose.helper");
 
+/**
+ * Get order list
+ * @param {object} filter
+ * @param {object} options
+ * @returns {Promise<[Order]>}
+ */
 const getOrderList = (filter, options = {}) => {
   const pagination = paginationQuery(options);
 
@@ -14,6 +20,18 @@ const getOrderList = (filter, options = {}) => {
   ]);
 };
 
+/**
+ * Update Order
+ * @param {object} filter
+ * @param {object} reqBody
+ * @param {object} options
+ * @returns {Promise<Order>}
+ */
+const updateOrder = (filter, reqBody, options = {}) => {
+  return Order.findOneAndUpdate(filter, reqBody, options);
+};
+
 module.exports = {
   getOrderList,
+  updateOrder,
 };

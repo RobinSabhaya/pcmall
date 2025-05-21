@@ -1,41 +1,31 @@
 const mongoose = require("mongoose");
+const { PAYMENT_STATUS } = require("../../src/helper/constant.helper");
 
-const paymentSchema = new mongoose.Schema(
+const PaymentSchema = new mongoose.Schema(
   {
-    customerId: {
-      type: mongoose.Types.ObjectId,
-      ref: "register",
+    orderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+      required: true,
     },
-    cartIds: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "Cart",
-      },
-    ],
-    stripePaymentIntentId: {
+    provider: {
       type: String,
+      enum: ["stripe", "paypal", "razorpay"],
+      required: true,
     },
-    amount: {
-      type: Number,
-    },
-    currency: {
-      type: String,
-    },
+    sessionId: { type: String },
+    transactionId: { type: String },
+    amount: { type: Number },
+    currency: { type: String, default: "inr" },
     status: {
       type: String,
-    },
-    customerEmail: {
-      type : String
-    },
-    stripeSessionId: {
-      type : String
+      enum: Object.values(PAYMENT_STATUS),
+      default: PAYMENT_STATUS.PENDING,
     },
   },
   {
     timestamps: true,
-    versionKey: false,
   }
 );
 
-const Payment = mongoose.model("Payment", paymentSchema);
-module.exports = Payment;
+module.exports = mongoose.model("Payment", PaymentSchema);
